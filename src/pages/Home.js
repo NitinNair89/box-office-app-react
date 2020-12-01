@@ -5,14 +5,15 @@ import apiGet from '../misc/config';
 const Home = () => {
   // Hooks
   const [inputState, setInputState] = useState('');
-  const [tvShowInfo, setTVShowInfo] = useState(null);
+  const [results, setResults] = useState(null);
+  const [searchType, setSearchType] = useState('shows');
 
   /**
    * Function to handle onClick event of search button
    */
   const handleOnClick = () => {
-    apiGet(`/search/shows?q=${inputState}`).then(result => {
-      setTVShowInfo(result);
+    apiGet(`/search/${searchType}?q=${inputState}`).then(result => {
+      setResults(result);
     });
   };
 
@@ -38,21 +39,34 @@ const Home = () => {
    * Function to display TV show's information
    */
   const renderTVShowInfo = () => {
-    if (tvShowInfo && tvShowInfo.length === 0) {
+    if (results && results.length === 0) {
       return <div>No results found!</div>;
     }
 
-    if (tvShowInfo && tvShowInfo.length > 0) {
-      return (
+    if (results && results.length > 0) {
+      return results[0].show ? (
         <div>
-          {tvShowInfo.map(item => (
+          {results.map(item => (
             <div key={item.show.id}>{item.show.name}</div>
+          ))}
+        </div>
+      ) : (
+        <div>
+          {results.map(item => (
+            <div key={item.person.id}>{item.person.name}</div>
           ))}
         </div>
       );
     }
 
     return null;
+  };
+
+  /**
+   * Function to set search type in state
+   */
+  const handleOnChangeSearch = event => {
+    setSearchType(event.target.value);
   };
 
   return (
@@ -70,6 +84,28 @@ const Home = () => {
       <button type="button" onClick={handleOnClick}>
         Search
       </button>
+      <div>
+        <label>
+          <input
+            type="radio"
+            name="search-type"
+            value="shows"
+            checked={searchType === 'shows'}
+            onChange={handleOnChangeSearch}
+          />
+          Shows
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="search-type"
+            value="people"
+            checked={searchType === 'people'}
+            onChange={handleOnChangeSearch}
+          />
+          Actor
+        </label>
+      </div>
       {renderTVShowInfo()}
     </MainPageLayout>
   );
