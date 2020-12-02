@@ -3,7 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 import E404 from './pages/E404';
 import Home from './pages/Home';
 import Starred from './pages/Starred';
-import './styles.css';
+import './index.css';
 
 export default function App() {
   return (
