@@ -4,6 +4,7 @@ import E404 from './pages/E404';
 import Home from './pages/Home';
 import Starred from './pages/Starred';
 import './index.css';
+import ShowInfo from './pages/ShowInfo';
 
 export default function App() {
   return (
@@ -15,6 +16,9 @@ export default function App() {
         <Starred />
       </Route>
 
+      <Route exact={true} path="/show/:showID">
+        <ShowInfo />
+      </Route>
       <Route>
         <E404 />
       </Route>
