@@ -1,13 +1,45 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { useParams } from 'react-router-dom';
 import apiGet from '../misc/config';
+
+// Reducer function
+const fnReducer = (prevState, action) => {
+  switch (action.type) {
+    case 'FETCH_SUCCESS': {
+      return {
+        show: action.show,
+        isLoading: false,
+        isError: false,
+      };
+    }
+
+    case 'FETCH_FAILED': {
+      return {
+        ...prevState,
+        isLoading: false,
+        isError: action.error,
+      };
+    }
+
+    default:
+      return prevState;
+  }
+};
+
+const initialState = {
+  show: null,
+  isLoading: true,
+  isError: null,
+};
 
 const ShowInfo = () => {
   // Hooks
   const { showID } = useParams();
-  const [showData, setShowData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setError] = useState(null);
+  // Reducer
+  const [{ show, isLoading, isError }, dispatch] = useReducer(
+    fnReducer,
+    initialState
+  );
 
   useEffect(() => {
     let isMounted = true;
@@ -15,14 +47,18 @@ const ShowInfo = () => {
     apiGet(`/shows/${showID}?embed[]=seasons&embed[]=cast`)
       .then(results => {
         if (isMounted) {
-          setShowData(results);
-          setIsLoading(false);
+          dispatch({
+            type: 'FETCH_SUCCESS',
+            show: results,
+          });
         }
       })
       .catch(err => {
         if (isMounted) {
-          setIsLoading(false);
-          setError(isError.message);
+          dispatch({
+            type: 'FETCH_FAILED',
+            error: err.message,
+          });
         }
       });
 
@@ -30,7 +66,7 @@ const ShowInfo = () => {
     return () => {
       isMounted = false;
     };
-  }, [showID, isError]);
+  }, [showID]);
 
   // Conditional rendering
   if (isLoading) {
