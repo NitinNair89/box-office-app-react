@@ -5,6 +5,7 @@ import Details from '../components/show/Details';
 import Seasons from '../components/show/Seasons';
 import ShowMainData from '../components/show/ShowMainData';
 import apiGet from '../misc/config';
+import { InfoBlock, ShowPageWrapper } from './Show.styled';
 
 // Reducer function
 const fnReducer = (prevState, action) => {
@@ -88,7 +89,7 @@ const ShowInfo = () => {
   }
 
   return (
-    <section>
+    <ShowPageWrapper>
       <ShowMainData
         image={show.image}
         name={show.name}
@@ -97,25 +98,25 @@ const ShowInfo = () => {
         genres={show.genres}
       />
 
-      <div>
+      <InfoBlock>
         <h2>Details</h2>
         <Details
           status={show.status}
           network={show.network}
           premierred={show.premierred}
         />
-      </div>
+      </InfoBlock>
 
-      <div>
+      <InfoBlock>
         <h2>Seasons</h2>
         <Seasons seasons={show._embedded.seasons} />
-      </div>
+      </InfoBlock>
 
-      <div>
+      <InfoBlock>
         <h2>Cast</h2>
         <Cast cast={show._embedded.cast} />
-      </div>
-    </section>
+      </InfoBlock>
+    </ShowPageWrapper>
   );
 };
 
