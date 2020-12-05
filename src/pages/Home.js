@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import ActorGrid from '../components/actor/ActorGrid';
 import CustomRadio from '../components/CustomRadio';
 import MainPageLayout from '../components/MainPageLayout';
@@ -10,6 +10,25 @@ import {
   SearchButtonWrapper,
   SearchInput,
 } from './Home.styled';
+
+/**
+ * Function to display TV show's information
+ */
+const renderTVShowInfo = results => {
+  if (results && results.length === 0) {
+    return <div>No results found!</div>;
+  }
+
+  if (results && results.length > 0) {
+    return results[0].show ? (
+      <ShowGrid data={results} />
+    ) : (
+      <ActorGrid data={results} />
+    );
+  }
+
+  return null;
+};
 
 const Home = () => {
   // Hooks
@@ -30,9 +49,12 @@ const Home = () => {
    * Function to handle onChange event of search box
    * @param {*} event
    */
-  const handleOnChange = event => {
-    setInputState(event.target.value);
-  };
+  const handleOnChange = useCallback(
+    event => {
+      setInputState(event.target.value);
+    },
+    [setInputState]
+  );
 
   /**
    * Function to handle onKeyDown event of search box
@@ -45,30 +67,11 @@ const Home = () => {
   };
 
   /**
-   * Function to display TV show's information
-   */
-  const renderTVShowInfo = () => {
-    if (results && results.length === 0) {
-      return <div>No results found!</div>;
-    }
-
-    if (results && results.length > 0) {
-      return results[0].show ? (
-        <ShowGrid data={results} />
-      ) : (
-        <ActorGrid data={results} />
-      );
-    }
-
-    return null;
-  };
-
-  /**
    * Function to set search type in state
    */
-  const handleOnChangeSearch = event => {
+  const handleOnChangeSearch = useCallback(event => {
     setSearchType(event.target.value);
-  };
+  }, []);
 
   return (
     <MainPageLayout>
@@ -108,7 +111,7 @@ const Home = () => {
           Search
         </button>
       </SearchButtonWrapper>
-      {renderTVShowInfo()}
+      {renderTVShowInfo(results)}
     </MainPageLayout>
   );
 };
